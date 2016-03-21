@@ -1,0 +1,242 @@
+<?php
+    session_start();
+
+    if (isset($_SESSION['user'])){
+    $user = $_SESSION['user'];
+    setcookie("user", $user, time()+660000);
+    }
+
+    if (!isset($_SESSION['user'])) {
+    header('Location: ../name.php');
+    }
+
+    include('../data.php');
+    // include('../messages.php');
+?>
+
+<html>
+
+<head>
+    <title><?php echo $_SESSION['user']; ?> home</title>
+    <style>
+        body {
+        margin:0;
+        background: linear-gradient(skyblue,green);
+        font-family: Trebuchet MS;
+
+        }
+
+        h1 {
+            font: 80px Trebuchet MS;
+            color:white;
+            margin-left:100px;
+            margin-top:0;
+        padding:20px;
+        margin:auto;
+            }
+
+        .row {
+        margin: 3vh 0 3vh 0 ;
+        padding: 5px;
+        }
+
+        .red {
+        width:100vw;
+        background:red;
+        }
+
+        .yellow {
+        background:yellow;
+        }
+        .green {
+        width:100vw;
+        position:fixed;
+        bottom:10px;
+
+        background:green;
+        z-index:-10;
+        }
+
+        input[type="text"], input[type="password"] {
+        padding: 10px;
+        margin:3px;
+        width:40%;
+        border: none;
+        border-bottom: solid 2px #c9c9c9;
+        transition: border 0.3s;
+        }
+        input[type="text"]:focus, input[type="password"]:focus,
+        input[type="text"].focus, input[type="password"].focus {
+        outline:none;
+        border-bottom: solid 2px #969696;
+        }
+
+        input[type="submit"] {
+        border-radius:0;
+        color:white;
+        border:none;
+        padding:10px;
+        margin:10px;
+        background-color:gray;
+        }
+
+        #compose {
+        padding:2%;
+        width:90%;
+        margin-left:10px;
+        margin-top:10px;
+        min-height:10vh;
+        background-color:yellow;
+        height:200px;
+        }
+
+        form {
+
+        margin:auto;
+        padding:3%;
+        }
+
+    textarea {
+            width:100%;
+            rows:8;
+            resize: none;
+            }
+
+    input[type="text"], textarea {
+    padding: 10px;
+    margin:1px;
+    border: none;
+    border-bottom: solid 2px #c9c9c9;
+    transition: border 0.3s;
+    }
+    input[type="text"]:focus, textarea:focus,
+    input[type="text"].focus, textarea.focus {
+    outline:none;
+    border-bottom: solid 2px #969696;
+    }
+
+
+    .msg {
+    border: solid 1px;
+    background-color:white;
+    margin-bottom:10px;
+        padding:10px;
+    }
+
+    p{
+    padding-left:1%;
+    padding-right:1%;
+    }
+
+    .from {
+    padding:1%;
+
+    background-color:gray;
+    color:white;
+    font-size:11px;
+    }
+
+</style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+    <script>
+
+    function submith2() {
+    $('#to').value = '';
+    $('#message').value = '';
+    }
+
+        $(document).ready(function() {
+        //    $('#directory').hide();
+          //  $('#directoryRow').mouseenter(function(){$('#directory').show()}).mouseleave(function(){$('#directory').hide()})
+        });
+    </script>
+</head>
+    <div style="width:55%;margin-right:0;height:100vh;float:left;">
+        <h1>Hello <?php echo $_SESSION['user']; ?> </h1>
+        <div id="compose">
+            <h2>Compose</h2>
+            <form method="post" action="../data.php">
+                <input type="text" name="message" placeholder="your message">
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+    </div>
+
+
+
+
+    <div style="float:left;height:100vh;width:45%;">
+        <div class="yellow row">
+        <h2>Directory</h2>
+        <div id="directory">
+        <form method="post">
+            <input type="text" name="name" placeholder="name">
+            <input type="text" name="compid" placeholder="compID">
+            <input type="submit">
+        </form>
+
+            <?php
+                if (isset($_POST['name'])) {
+
+                $name = strtolower($_POST['name']);
+                $results = false;
+
+                foreach ($names as $needle) {
+                if ($name != "") {
+                    if (strpos($needle, $name) !== false) {
+                    $index = array_search($needle, $names);
+                    echo $needle . ' : ' . $users[$index] . '<br>';
+                    $results = true;
+                    }}}
+
+
+                if (!$results) {echo '';}
+                }
+
+
+                if (isset($_POST['compid'])) {
+
+                $compid = strtolower($_POST['compid']);
+                $results = false;
+
+                foreach ($users as $user) {
+            if ($compid != "") {
+                    if (strpos($user, $compid) !== false) {
+                    $index = array_search($user, $users);
+                    echo  $names[$index] . ' : ' . $user . '<br>';
+                    $results = true;
+                    }}}
+
+                if (!$results) {echo '';}
+                }
+            unset($_POST);
+            ?>
+        </div>
+    </div>
+        <div class="yellow row">
+            <h2>Important Information</h2>
+                    <?php
+                foreach ($information as $message) {
+                    echo "<div class='msg'>" . $message . "</div>";
+                }
+                    ?>
+        </div>
+
+        <div class="yellow row">
+            <h2>Messages</h2>
+            <?php
+            foreach ($messages as $message) {
+            echo "<div class='msg'>$message</div><div class='from'>from: admin</div>";
+
+            }
+            ?>
+        </div>
+
+    </div>
+    <div class="green row">
+        <img src="../yellow.png" height="140px">
+    </div>
+
+</html>
